@@ -1,0 +1,61 @@
+{
+  "name": "webapplication",
+  "version": "1.0.0",
+  "description": "This project webapplication for SC310006 Mobile and Web Application Development",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jetsadakorn192-7/ProjectFinalForMobileWeb.git"
+  },
+  "author": "Group 15",
+  "contributors": [
+    {
+      "name": "Jetsadakorn Dutphayap 653380192-7",
+      "email": "jetsadakorn.d@kkumail.com"
+    },
+    {
+      "name": "Channarong Ninkaew 653380193-5",
+      "email": "channarong.ni@kkumail.com"
+    },
+    {
+      "name": "Tanthai Orahunta 653380199-3",
+      "email": "tanthai.o@kkumail.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jetsadakorn192-7/ProjectFinalForMobileWeb/issues"
+  },
+  "homepage": "https://Jetsadakorn192-7.github.io/ProjectFinalForMobileWeb",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
