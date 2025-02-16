@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ProjectFinalForMobileWeb/static/css/main.e6c13ad2.css",
+    "main.js": "/ProjectFinalForMobileWeb/static/js/main.bcfdafd7.js",
+    "static/js/488.7f281608.chunk.js": "/ProjectFinalForMobileWeb/static/js/488.7f281608.chunk.js",
+    "index.html": "/ProjectFinalForMobileWeb/index.html",
+    "main.e6c13ad2.css.map": "/ProjectFinalForMobileWeb/static/css/main.e6c13ad2.css.map",
+    "main.bcfdafd7.js.map": "/ProjectFinalForMobileWeb/static/js/main.bcfdafd7.js.map",
+    "488.7f281608.chunk.js.map": "/ProjectFinalForMobileWeb/static/js/488.7f281608.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.bcfdafd7.js"
+  ]
+}
