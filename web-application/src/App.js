@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar'; // ควรสร้างเพิ่ม
+import Navbar from './components/Navbar';
 import Login from './components/Login';
 import CourseList from './components/CourseList';
 import UserProfile from './components/UserProfile';

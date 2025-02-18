@@ -1,60 +1,52 @@
-import { useState, useEffect } from 'react';
-import { auth, db } from '../firebase';
+import React, { useState, useEffect } from 'react';
+import { auth, db } from '../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 function UserProfile() {
-  const [userData, setUserData] = useState({
-    name: '',
-    email: '',
-    phone: ''
-  });
+  const [user, setUser] = useState(null);
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-          setUserData(userDoc.data());
+    // ตรวจสอบว่าผู้ใช้ล็อกอินอยู่หรือไม่
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        
+        // ดึงข้อมูลโปรไฟล์จาก Firestore
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          setProfileData(userDoc.data());
+        } else {
+          console.log('No user profile found in Firestore');
         }
+      } else {
+        setUser(null);
       }
-    };
-    fetchUserData();
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      await db.collection('users').doc(auth.currentUser.uid).update(userData);
-      alert('Profile updated successfully!');
-    } catch (error) {
-      console.error('Error updating profile: ', error);
-    }
-  };
-
   return (
-    <div className="profile-container">
-      <h2>Edit Profile</h2>
-      <form onSubmit={handleUpdate}>
-        <input
-          type="text"
-          value={userData.name}
-          onChange={(e) => setUserData({...userData, name: e.target.value})}
-          placeholder="Name"
-        />
-        <input
-          type="email"
-          value={userData.email}
-          onChange={(e) => setUserData({...userData, email: e.target.value})}
-          placeholder="Email"
-        />
-        <input
-          type="tel"
-          value={userData.phone}
-          onChange={(e) => setUserData({...userData, phone: e.target.value})}
-          placeholder="Phone"
-        />
-        <button type="submit">Update Profile</button>
-      </form>
+    <div>
+      <h1>User Profile</h1>
+      {user ? (
+        <div>
+          <p><strong>Email:</strong> {user.email}</p>
+          {profileData && (
+            <>
+              <p><strong>Name:</strong> {profileData.name}</p>
+              <p><strong>Phone:</strong> {profileData.phone}</p>
+            </>
+          )}
+        </div>
+      ) : (
+        <p>Please log in to view your profile.</p>
+      )}
     </div>
   );
 }
+
+export default UserProfile;

@@ -1,27 +1,23 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore"; 
+import { getAuth, GoogleAuthProvider } from "firebase/auth"; 
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-auth-domain",
-  projectId: "your-project-id",
-  storageBucket: "your-storage-bucket",
-  messagingSenderId: "your-messaging-sender-id",
-  appId: "your-app-id"
+  apiKey: "AIzaSyChd5kiWywUOAh3XYCn_02hWY0jmjJGRzM",
+  authDomain: "projectfinalwebapplication2568.firebaseapp.com",
+  projectId: "projectfinalwebapplication2568",
+  storageBucket: "projectfinalwebapplication2568.firebasestorage.app",
+  messagingSenderId: "286234441326",
+  appId: "1:286234441326:web:5bbf1d4ab1328289c9187f",
+  measurementId: "G-5X234SBLE7"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-
-export const signInWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    return result.user;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
+const analytics = getAnalytics(app);
+export const db = getFirestore(app); 
+export const auth = getAuth(app); 
+export const googleProvider = new GoogleAuthProvider(); 

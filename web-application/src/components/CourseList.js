@@ -1,34 +1,49 @@
-import { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import React, { useState, useEffect } from 'react';
+import { db } from '../config/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import './CourseList.css';
 
 function CourseList() {
   const [courses, setCourses] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const coursesSnapshot = await db.collection('courses').get();
-      const coursesList = coursesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setCourses(coursesList);
+      try {
+        const querySnapshot = await getDocs(collection(db, 'courses')); // ดึงข้อมูลจาก Firestore
+        const courseData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setCourses(courseData);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
     };
 
     fetchCourses();
   }, []);
 
+  const handleCourseClick = (courseId) => {
+    navigate(`/course/${courseId}`);
+  };
+
   return (
-    <div className="courses-container">
-      <h2>Available Courses</h2>
-      <div className="courses-grid">
-        {courses.map(course => (
-          <div key={course.id} className="course-card">
-            <h3>{course.title}</h3>
-            <p>{course.description}</p>
-            <span>{course.credits} Credits</span>
-          </div>
-        ))}
-      </div>
+    <div className="course-list-container">
+      <h1>Available Courses</h1>
+      <ul>
+        {courses.length > 0 ? (
+          courses.map((course) => (
+            <li key={course.id} onClick={() => handleCourseClick(course.id)}>
+              <h3>{course.name}</h3>
+              <p>Instructor: {course.instructor}</p>
+              <p>Credits: {course.credits}</p>
+            </li>
+          ))
+        ) : (
+          <p>Loading courses...</p>
+        )}
+      </ul>
     </div>
   );
 }
+
+export default CourseList;
