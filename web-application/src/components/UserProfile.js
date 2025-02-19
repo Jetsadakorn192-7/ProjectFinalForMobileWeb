@@ -1,52 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { auth, db } from '../config/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ใช้ useNavigate สำหรับ React Router 6
+import { auth } from "../config/firebase";
 
-function UserProfile() {
+const UserProfile = () => {
   const [user, setUser] = useState(null);
-  const [profileData, setProfileData] = useState(null);
+  const navigate = useNavigate(); // ใช้ useNavigate
 
   useEffect(() => {
-    // ตรวจสอบว่าผู้ใช้ล็อกอินอยู่หรือไม่
-    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        
-        // ดึงข้อมูลโปรไฟล์จาก Firestore
-        const userDocRef = doc(db, 'users', currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        
-        if (userDoc.exists()) {
-          setProfileData(userDoc.data());
-        } else {
-          console.log('No user profile found in Firestore');
-        }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
       } else {
-        setUser(null);
+        navigate("/"); // ใช้ navigate แทน history.push
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
   return (
-    <div>
+    <div className="profile-container">
       <h1>User Profile</h1>
       {user ? (
         <div>
-          <p><strong>Email:</strong> {user.email}</p>
-          {profileData && (
-            <>
-              <p><strong>Name:</strong> {profileData.name}</p>
-              <p><strong>Phone:</strong> {profileData.phone}</p>
-            </>
-          )}
+          <p><strong>Name:</strong> {user.displayName || "No Name"}</p>
+          <p><strong>Email:</strong> {user.email || "No Email"}</p>
+          <p><strong>Phone:</strong> {user.phoneNumber || "No Phone"}</p>
+          <button onClick={() => auth.signOut().then(() => navigate("/"))}>Logout</button>
         </div>
       ) : (
-        <p>Please log in to view your profile.</p>
+        <p>Loading...</p>
       )}
     </div>
   );
-}
+};
 
 export default UserProfile;

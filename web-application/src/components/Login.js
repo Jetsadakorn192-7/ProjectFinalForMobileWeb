@@ -1,81 +1,90 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css'; // Ensure you create and modify this CSS file for styling
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
+import { auth, googleProvider, RecaptchaVerifier, signInWithPhoneNumber, signInWithPopup } from "../config/firebase";
+import "../styles/Login.css";
 
-function Login() {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-
-  // Placeholder function to simulate Google sign-in
-  const signInWithGoogle = async () => {
-    // Simulate successful sign-in
-    return new Promise((resolve) => setTimeout(resolve, 1000));
-  };
+const Login = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationId, setVerificationId] = useState(null);
 
   const handleGoogleLogin = async () => {
     try {
-      await signInWithGoogle();
-      navigate('/courses');
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("User Info:", result.user);
+      alert(`Logged in as ${result.user.displayName}`);
     } catch (error) {
-      console.error('Error logging in with Google: ', error);
+      console.error("Error logging in with Google:", error);
     }
   };
 
-  const handlePhoneNumberLogin = async () => {
-    // Placeholder for phone number authentication
-    console.log('Phone number entered:', phoneNumber);
+  const setupRecaptcha = () => {
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+      size: "invisible",
+    });
   };
 
-  const handleUsernamePasswordLogin = async () => {
-    // Placeholder for username and password authentication
-    console.log('Username:', username, 'Password:', password);
+  const sendOtp = async () => {
+    setupRecaptcha();
+    try {
+      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+      setVerificationId(confirmationResult.verificationId);
+      alert("OTP sent!");
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
+  };
+
+  const verifyOtp = async () => {
+    try {
+      const credential = await confirmationResult.confirm(verificationCode);
+      console.log("User Info:", credential.user);
+      alert(`Logged in as ${credential.user.phoneNumber}`);
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+    }
   };
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <h2>Welcome to Course Management</h2>
-        
-        <button className="google-login-button" onClick={handleGoogleLogin}>
-          Sign in with Google
+      <h1>Login</h1>
+
+      {/* Google Login */}
+      <button className="google-btn" onClick={handleGoogleLogin}>
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo" />
+        Login with Google
+      </button>
+
+      <hr className="divider" />
+
+      {/* Phone Login */}
+      <div className="phone-login">
+        <input 
+          type="text" 
+          placeholder="Phone Number" 
+          value={phoneNumber} 
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          className="input-field"
+        />
+        <button className="btn send-btn" onClick={sendOtp}>
+          Send OTP
         </button>
 
-        <div className="divider">
-          <span>or</span>
-        </div>
-
-        <div className="phone-login">
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-          <button onClick={handlePhoneNumberLogin}>Login with Phone</button>
-        </div>
-
-        <div className="username-password-login">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleUsernamePasswordLogin}>
-            Login with Username and Password
-          </button>
-        </div>
+        <input 
+          type="text" 
+          placeholder="Enter OTP" 
+          value={verificationCode} 
+          onChange={(e) => setVerificationCode(e.target.value)}
+          className="input-field"
+        />
+        <button className="btn verify-btn" onClick={verifyOtp}>
+          Verify OTP
+        </button>
       </div>
+
+      <div id="recaptcha-container"></div>
     </div>
   );
-}
+};
 
 export default Login;
